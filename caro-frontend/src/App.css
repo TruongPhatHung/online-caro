@@ -1,0 +1,594 @@
+/* --- BÀN CỜ (PHONG CÁCH NEON) --- */
+.board {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin: 20px auto;
+    
+    /* BẮT BUỘC: Thêm dòng này để khung viền ôm sát vừa vặn vào lưới cờ, không bị giãn ngang màn hình */
+    width: fit-content;
+    
+    border: 2px solid #a855f7;
+    border-radius: 12px;
+    box-shadow: 0 0 15px rgba(168, 85, 247, 0.5), inset 0 0 10px rgba(168, 85, 247, 0.3);
+    background-color: #050814;
+    padding: 8px; /* Tăng nhẹ padding để có độ thở giữa khung viền và ô cờ */
+}
+
+.board-row {
+    display: flex;
+}
+
+.square {
+    width: calc(min(65vh, 90vw) / var(--board-size));
+    height: calc(min(65vh, 90vw) / var(--board-size));
+    font-size: calc(min(40vh, 60vw) / var(--board-size));
+    
+    background-color: #0b1120; 
+    
+    /* CHỈNH LẠI: Viền sáng hơn để nhìn rõ đường nét caro */
+    border: 1px solid rgba(255, 255, 255, 0.2); 
+    
+    border-radius: 4px;
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-family: 'Nunito', 'Comic Sans MS', sans-serif;
+    font-weight: 900;
+}
+
+.square:hover {
+    background-color: #162445;
+    /* Hiệu ứng viền sáng lên khi di chuột */
+    border-color: rgba(255, 255, 255, 0.5); 
+}
+
+/* --- HIỆU ỨNG NEON CHO QUÂN CỜ --- */
+.text-x { 
+    color: #00e5ff; /* Xanh Cyan dạ quang */
+    text-shadow: 0 0 5px #00e5ff, 0 0 10px #00e5ff, 0 0 20px #00e5ff; 
+}
+.text-o { 
+    color: #ff0055; /* Đỏ hồng dạ quang */
+    text-shadow: 0 0 5px #ff0055, 0 0 10px #ff0055, 0 0 20px #ff0055; 
+}
+.text-y {
+    color: #a855f7; /* Tím dạ quang */
+    text-shadow: 0 0 5px #a855f7, 0 0 10px #a855f7, 0 0 20px #a855f7; 
+}
+
+/* --- HIỆU ỨNG KHI CHIẾN THẮNG --- */
+.highlight {
+    background-color: #fbbf24 !important; 
+    box-shadow: 0 0 20px #fbbf24 !important;
+    border-color: #fff !important;
+    color: #000 !important;
+    text-shadow: none !important; /* Tắt dạ quang chữ để dễ đọc hơn */
+}
+.reset-btn {
+    padding: 10px 20px; font-size: 16px; background-color: #28a745; 
+    color: white; border: none; border-radius: 5px; cursor: pointer;
+}
+.reset-btn:hover { background-color: #218838; }
+/* Layout chính */
+.lobby-wrapper {
+    display: flex;
+    gap: 24px;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    align-items: flex-start;
+}
+.modern-card {
+    background: #1e272e;
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+    border: 1px solid #2f3542;
+}
+.lobby-main {
+    flex: 1;
+    min-width: 340px; /* THÊM DÒNG NÀY: Giữ form luôn rộng ít nhất 340px */
+    max-width: 400px;
+}
+.lobby-stats {
+    flex: 2;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+.stats-row {
+    display: flex;
+    gap: 24px;
+    flex-wrap: wrap; /* Cho phép 2 bảng rớt xuống dòng nếu hết chỗ */
+}
+.half-width {
+    flex: 1;
+    min-width: 300px; /* Đảm bảo bảng không bao giờ bị bóp quá nhỏ */
+}
+
+/* Header & Icon */
+.lobby-header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    margin-bottom: 24px;
+}
+.text-primary { color: #3742fa; }
+
+/* Input có Icon */
+.input-group, .select-wrapper {
+    position: relative;
+    flex: 1;
+    margin-bottom: 16px;
+    width: 100%;
+}
+.input-icon, .select-icon {
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #a4b0be;
+    pointer-events: none;
+}
+.input-group input, .select-wrapper select {
+    width: 100%;
+    padding: 12px 12px 12px 40px;
+    background: #2f3542;
+    border: 1px solid #57606f;
+    border-radius: 8px;
+    color: white;
+    font-size: 1rem;
+    transition: all 0.3s;
+    /* BẮT BUỘC THÊM DÒNG NÀY ĐỂ KHÔNG BỊ TRÀN VIỀN */
+    box-sizing: border-box; 
+}
+.input-group input:focus, .select-wrapper select:focus {
+    border-color: #3742fa;
+    box-shadow: 0 0 0 3px rgba(55, 66, 250, 0.2);
+    outline: none;
+}
+
+/* Nút bấm */
+.action-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    padding: 12px;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s;
+    font-size: 1rem;
+    white-space: nowrap; /* BẮT BUỘC THÊM: Ép chữ luôn nằm trên 1 dòng */
+}
+.create-btn {
+    background: #3742fa;
+    color: white;
+}
+.create-btn:hover { background: #5352ed; transform: translateY(-2px); }
+
+.join-group {
+    display: flex;
+    align-items: stretch; /* Căn cho nút bấm và ô input cao bằng nhau */
+    gap: 12px;
+    width: 100%;
+}
+
+/* Thêm class này để ô input tự động giãn ra chiếm phần trống, đẩy nút bấm về góc phải */
+.flex-1 {
+    flex: 1;
+    margin-bottom: 0 !important; 
+}
+
+.join-btn {
+    background: #ffa502;
+    color: #fff;
+    width: auto; /* Đổi từ 140px thành auto để vừa vặn với chữ */
+    padding: 0 24px; /* Thêm padding trái phải */
+    margin-bottom: 0 !important;
+    flex-shrink: 0; /* BẮT BUỘC THÊM: Ngăn không cho nút bị bóp nhỏ lại */
+}
+.join-btn:hover { background: #ff7f50; transform: translateY(-2px); }
+/* Đường kẻ chữ "HOẶC" */
+.divider {
+    text-align: center;
+    margin: 20px 0;
+    position: relative;
+}
+.divider::before {
+    content: "";
+    position: absolute;
+    left: 0; top: 50%;
+    width: 100%; height: 1px;
+    background: #57606f;
+    z-index: 1;
+}
+.divider span {
+    background: #1e272e;
+    padding: 0 10px;
+    color: #a4b0be;
+    font-size: 0.85rem;
+    position: relative;
+    z-index: 2;
+}
+
+/* Biểu đồ và Bảng */
+.stats-section h3 {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 16px;
+    font-size: 1.1rem;
+}
+.rank-badge {
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-weight: bold;
+    background: #2f3542;
+}
+.rank-1 { background: #ffd32a; color: #000; }
+.rank-2 { background: #d2dae2; color: #000; }
+.rank-3 { background: #cd6133; color: #fff; }
+/* Room Settings Dropdown */
+.room-settings {
+    display: flex;
+    gap: 12px;
+    width: 100%;
+}
+.room-settings select {
+    flex: 1;
+    padding: 12px 10px 12px 35px; /* Giảm padding trái/phải 1 chút */
+    border-radius: 8px;
+    background: #13151f;
+    border: 1px solid #444;
+    color: white;
+    outline: none;
+    cursor: pointer;
+    box-sizing: border-box;
+    font-size: 14px; /* Giảm size chữ nhẹ để hiển thị đủ "2 Người chơi" */
+}
+.room-settings select:focus {
+    border-color: #0b80f1;
+}
+
+/* Form Styles */
+.form-group { margin-bottom: 20px; }
+
+/* Gom chung input của form-group và join-group để xử lý 1 lần */
+.form-group input,
+.join-group input {
+    width: 100%;
+    /* ĐÃ SỬA: Chừa 40px bên trái để không đè lên icon user/chìa khóa */
+    padding: 12px 12px 12px 40px !important; 
+    border-radius: 8px;
+    border: 1px solid #444;
+    background: #13151f;
+    color: white;
+    /* ĐÃ SỬA: Giảm font size một chút để placeholder hiển thị đầy đủ */
+    font-size: 14px; 
+    box-sizing: border-box;
+    text-overflow: ellipsis; /* Nếu chữ vẫn dài quá thì hiện "..." */
+}
+.form-group input:focus,
+.join-group input:focus { 
+    outline: 2px solid #0b80f1; 
+}
+
+.join-group { 
+    display: flex; 
+    gap: 10px; 
+    align-items: stretch;
+}
+.join-group input { 
+    flex: 1; 
+    margin-bottom: 0 !important;
+}
+
+/* Buttons */
+.action-btn {
+    padding: 12px 20px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 16px;
+    color: white;
+    transition: 0.2s;
+    width: 100%;
+}
+.create-btn { background-color: #0b80f1; }
+.create-btn:hover { background-color: #0968c3; }
+.join-btn { background-color: #f78c1c; width: auto; }
+.join-btn:hover { background-color: #d67918; }
+
+/* Thêm class bọc ngoài bảng để cho phép cuộn ngang nếu tên 3 người chơi quá dài */
+.table-scroll {
+    width: 100%;
+    overflow-x: auto;
+}
+.stats-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+    color: #e0e0e0;
+    
+    /* Ép bảng giãn ra vừa đủ với nội dung dài nhất bên trong */
+    min-width: max-content; 
+}
+
+.stats-table th, .stats-table td {
+    padding: 12px 16px; /* Tăng nhẹ padding 2 bên để thoáng hơn */
+    text-align: left;
+    border-bottom: 1px solid #333;
+    
+    /* BẮT BUỘC: Ngăn chữ tự động rớt dòng */
+    white-space: nowrap; 
+}
+
+.stats-table th {
+    background: #13151f;
+    color: #8892b0;
+    font-weight: 600;
+}
+
+.stats-table tr:hover { 
+    background: #2a2d3e; 
+}
+.text-win { color: #4CAF50 !important; font-weight: bold; }
+.text-lose { color: #f44336 !important; font-weight: bold; }
+/* --- GAME HEADER --- */
+.game-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    max-width: 800px;
+    margin: 0 auto 20px auto;
+    padding: 10px 20px;
+    background: rgba(19, 21, 31, 0.8);
+    border-radius: 8px;
+    border: 1px solid #333;
+}
+
+.leave-btn {
+    background-color: #f44336;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: 0.2s;
+}
+
+.leave-btn:hover { background-color: #d32f2f; }
+
+.player-count {
+    color: #38bdf8;
+    font-weight: bold;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.sys-message {
+    background-color: #ff9800;
+    color: #fff;
+    padding: 10px;
+    border-radius: 8px;
+    margin: 10px auto;
+    width: fit-content;
+    font-weight: bold;
+    animation: fadeInOut 5s forwards;
+}
+
+@keyframes fadeInOut {
+    0% { opacity: 0; transform: translateY(-10px); }
+    10% { opacity: 1; transform: translateY(0); }
+    80% { opacity: 1; }
+    100% { opacity: 0; }
+}
+/* Nút bấm hiện đại, có icon đi kèm */
+.modern-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 16px;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    background: #2f3542;
+    color: white;
+}
+.modern-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+}
+
+/* Nút thoát phòng */
+.leave-btn.modern-btn {
+    background: #ff4757;
+}
+.leave-btn.modern-btn:hover {
+    background: #ff6b81;
+}
+
+/* Nút chơi ván mới (Màu xanh lá neon) */
+.success-btn {
+    background: linear-gradient(135deg, #2ed573, #7bed9f);
+    color: #2f3542;
+    font-size: 1.1rem;
+    padding: 12px 24px;
+    box-shadow: 0 4px 15px rgba(46, 213, 115, 0.4);
+}
+.success-btn:hover {
+    box-shadow: 0 6px 20px rgba(46, 213, 115, 0.6);
+}
+
+/* Badge số người chơi */
+.modern-badge {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(255, 255, 255, 0.1);
+    padding: 8px 14px;
+    border-radius: 20px;
+    font-weight: 500;
+}
+
+/* Chữ chiến thắng có hiệu ứng Glow (Phát sáng) */
+.winner-text {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    font-size: 2rem;
+    text-shadow: 0 0 10px currentColor;
+}
+.win-text {
+    color: #eccc68; /* Màu vàng Gold */
+}
+.lose-text {
+    color: #ff4757; /* Màu đỏ */
+}
+
+/* Hiệu ứng nảy cho Icon cúp vàng */
+.bounce-icon {
+    animation: bounce 1s infinite alternate;
+}
+@keyframes bounce {
+    0% { transform: translateY(0); }
+    100% { transform: translateY(-8px); }
+}
+
+/* Căn chỉnh các thành phần */
+.winner-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    margin-bottom: 20px;
+}
+.timer-text {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+/* --- TOAST NOTIFICATION (HOÀN THIỆN ĐẦY ĐỦ CÁC TYPE) --- */
+.toast-container {
+    position: fixed;
+    top: 24px;
+    right: 24px;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    pointer-events: none;
+}
+
+.toast-card {
+    pointer-events: auto;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 300px;
+    max-width: 420px;
+    padding: 14px 18px;
+    border-radius: 12px;
+    background: #1e272e;
+    color: #ffffff;
+    font-size: 0.95rem;
+    font-weight: 600;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 10px rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    
+    /* Animation Trượt Xuống */
+    animation: toastToggleIn 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+    transition: all 0.3s ease;
+}
+
+/* Xử lý chữ dài không bị đè nút close */
+.toast-message {
+    flex: 1;
+    word-break: break-word;
+    line-height: 1.4;
+}
+
+/* PHÂN LOẠI MÀU SẮC BANNER */
+.toast-card.error {
+    border-left: 4px solid #ff4757;
+    background: linear-gradient(135deg, #1e272e, #2d1b22);
+}
+
+.toast-card.warning {
+    border-left: 4px solid #ffa502;
+    background: linear-gradient(135deg, #1e272e, #2d261b);
+}
+
+.toast-card.success {
+    border-left: 4px solid #2ed573;
+    background: linear-gradient(135deg, #1e272e, #1b2d22);
+}
+
+/* Thêm class Info cho thông báo hệ thống Socket */
+.toast-card.info {
+    border-left: 4px solid #1e90ff;
+    background: linear-gradient(135deg, #1e272e, #1b263b);
+}
+
+.toast-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.toast-card.error .toast-icon { color: #ff4757; }
+.toast-card.warning .toast-icon { color: #ffa502; }
+.toast-card.success .toast-icon { color: #2ed573; }
+.toast-card.info .toast-icon { color: #1e90ff; }
+
+.toast-close {
+    margin-left: auto;
+    background: transparent;
+    border: none;
+    color: #a4b0be;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    padding: 2px;
+    border-radius: 4px;
+    transition: 0.2s;
+    flex-shrink: 0;
+}
+
+.toast-close:hover {
+    color: #fff;
+    background: rgba(255, 255, 255, 0.1);
+}
+
+@keyframes toastToggleIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px) scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
